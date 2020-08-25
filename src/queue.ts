@@ -2,21 +2,41 @@ import { Message, MessageState } from './message'
 
 export class Queue {
   messagesReady: Array<Message>
-  messagesProcessing: Array<Message>
+  messagesProcessing: Map<string, Message>
 
   constructor(public name: string) {
     this.messagesReady = new Array<Message>()
-    this.messagesProcessing = new Array<Message>()
+    this.messagesProcessing = new Map<string, Message>()
   }
 
-  Push(body: any): string {
-    const message = new Message(body)
+  LengthOfAvailable(): number {
+    return this.messagesReady.length
+  }
+
+  MessageTimeout(message: Message) {
+    this.messagesProcessing.delete(message.id)
+    this.messagesReady.push(message)
+  }
+
+  Confirm(messageID: string) {
+    if (!this.messagesProcessing.has(messageID)) {
+      throw Error(`Message with ID ${messageID} it's not available for confirm`)
+    }
+
+    this.messagesProcessing.get(messageID)!.state = MessageState.DONE
+    this.messagesProcessing.delete(messageID)
+  }
+
+  Push(body: any, timeout: number = 1000): string {
+    const message = new Message(body, this.MessageTimeout.bind(this), timeout)
+
     message.state = MessageState.READY
     this.messagesReady.push(message)
+
     return message.id
   }
 
-  PopFront(amount: Number = 10): Array<Message> {
+  PopFront(amount: number = 10): Array<Message> {
     const messages = Array<Message>()
 
     for (let index = 0; index < amount; index++) {
@@ -26,7 +46,8 @@ export class Queue {
         break
       }
 
-      this.messagesProcessing.push(message)
+      message.state = MessageState.PROCESSING
+      this.messagesProcessing.set(message.id, message)
       messages.push(message)
     }
 
