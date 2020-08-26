@@ -18,7 +18,7 @@ yarn install
 yarn start
 ```
 
-The command `yarn start` will compile the `TypeScript` and run the `Node.JS` service which will expose the port `3000`, which can be changed by the env var `PORT` if needed.
+The command `yarn start` will compile the `TypeScript` and run the `Node.JS` service which will expose the `HTTP` port `3000`, which can be changed by the env var `PORT` if needed.
 
 ## 🙋‍♂️Methods Available
 
@@ -88,7 +88,7 @@ The number of messages returned is `10` by default, however, the user can reques
 curl -X GET "http://localhost:3000/?amount=100"
 ```
 
-> Note this POC doesn't care about the amount of the messages retrieved, however, to scale and control the service some limit should be implied here or it can turn into a catastrophic failure if the user requests all messages and never confirm
+> Note this POC doesn't care about the amount of the messages retrieved, however, to scale and control the service some limit should be implied here or it can turn into a catastrophic failure if the user requests all messages and never confirm and a long timeout is configured
 
 Otherwise, the get will fail and return `500`
 
