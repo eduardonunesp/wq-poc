@@ -19,8 +19,7 @@ export const createServer = (queue: Queue) => {
   })
 
   app.post('/', (req, res) => {
-    const timeout: any = req.query['timeout']
-    res.status(201).send({ messageID: queue.Push(req.body, timeout) })
+    res.status(201).send({ messageID: queue.Push(req.body) })
   })
 
   app.patch('/:id', (req, res) => {
@@ -28,7 +27,7 @@ export const createServer = (queue: Queue) => {
       queue.Confirm(req.params.id)
       res.status(204).send({})
     } catch (err) {
-      res.status(400).send({ error: err.message })
+      res.status(404).send({ error: err.message })
     }
   })
 
@@ -37,8 +36,10 @@ export const createServer = (queue: Queue) => {
 
 if (require.main === module) {
   const port = process.env.PORT ?? 3000
+  const defaultTimeout = process.env.DEFAULT_TIMEOUT ?? 1000
+
   const queueManager = new QueueManager()
-  const queue = queueManager.newQueue('wonderq')
+  const queue = queueManager.newQueue('wonderq', +defaultTimeout)
   const app = createServer(queue)
   app.listen(port, () => console.log(`App listening on port ${port}`))
 }

@@ -81,10 +81,10 @@ describe('Queue', () => {
 
   describe('Test Confirm', () => {
     it('Should pop front and confirm correctly', () => {
-      const queue = new Queue('my-queue')
+      const queue = new Queue('my-queue', 100)
 
       for (let i = 0; i < 4; i++) {
-        queue.Push({ order: i }, 100)
+        queue.Push({ order: i })
       }
 
       const [result1] = queue.PopFront(1)
@@ -96,10 +96,10 @@ describe('Queue', () => {
     })
 
     it('Should confirmed messages never come back to queue', (done) => {
-      const queue = new Queue('my-queue')
+      const queue = new Queue('my-queue', 100)
 
       for (let i = 0; i < 4; i++) {
-        queue.Push({ order: i }, 100)
+        queue.Push({ order: i })
       }
 
       const [result1] = queue.PopFront(1)
@@ -120,10 +120,10 @@ describe('Queue', () => {
     })
 
     it('Should not confirmed messages back to queue', (done) => {
-      const queue = new Queue('my-queue')
+      const queue = new Queue('my-queue', 100)
 
       for (let i = 0; i < 4; i++) {
-        queue.Push({ order: i }, 100)
+        queue.Push({ order: i })
       }
 
       queue.PopFront(1)
@@ -138,10 +138,10 @@ describe('Queue', () => {
     })
 
     it('Should not confirm messages done', () => {
-      const queue = new Queue('my-queue')
+      const queue = new Queue('my-queue', 100)
 
       for (let i = 0; i < 4; i++) {
-        queue.Push({ order: i }, 100)
+        queue.Push({ order: i })
       }
 
       const [result1] = queue.PopFront(1)

@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "start": "tsc && node build/index.js",
     "build": "tsc",
     "format": "prettier --write \"**/*.ts\"",
     "lint": "tslint \"src/**/*.ts\"",

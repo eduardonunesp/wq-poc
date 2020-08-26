@@ -17,7 +17,7 @@ export class Queue {
    *
    * @param name string The name of the queue as unique indentification
    */
-  constructor(public name: string) {
+  constructor(public name: string, public timeout: number = 1000) {
     this.messagesReady = new Array<Message>()
     this.messagesProcessing = new Map<string, Message>()
   }
@@ -66,8 +66,12 @@ export class Queue {
    * @param body any Body of the message to be pushed into the queue
    * @param timeout number The value in ms to the amount of time to the message expire if not confirmed
    */
-  Push(body: any, timeout: number = 1000): string {
-    const message = new Message(body, (message: Message) => this.MessageTimeout(message), timeout)
+  Push(body: any): string {
+    const message = new Message(
+      body,
+      (message: Message) => this.MessageTimeout(message),
+      this.timeout
+    )
 
     message.state = MessageState.READY
     this.messagesReady.push(message)
@@ -116,12 +120,12 @@ export class QueueManager {
    * @param queueName string Name of the new queue
    * @returns Queue Returns a new queue ready to be used
    */
-  newQueue(queueName: string): Queue {
+  newQueue(queueName: string, timeout: number = 1000): Queue {
     if (this.queues.has(queueName)) {
       throw Error(`Queue with name ${queueName} already exists`)
     }
 
-    const newQueue = new Queue(queueName)
+    const newQueue = new Queue(queueName, timeout)
     this.queues.set(queueName, newQueue)
     return newQueue
   }

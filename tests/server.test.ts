@@ -9,11 +9,12 @@ const sleep = (ms: number) =>
     setTimeout(resolve, ms)
   })
 
-describe.only('Server', () => {
+describe('Server', () => {
+  let queueManager: QueueManager
   let queue: Queue
 
   beforeEach(() => {
-    const queueManager = new QueueManager()
+    queueManager = new QueueManager()
     queue = queueManager.newQueue('wonderq')
   })
 
@@ -83,15 +84,14 @@ describe.only('Server', () => {
     })
 
     it('Should return the message available for a consumer only 2', async () => {
+      queue = queueManager.newQueue('wonderqt', 100)
+
       for (let index = 0; index < 100; index++) {
-        queue.Push(
-          {
-            message: {
-              description: `Message ${index}`,
-            },
+        queue.Push({
+          message: {
+            description: `Message ${index}`,
           },
-          100
-        )
+        })
       }
 
       const app = createServer(queue)
@@ -120,14 +120,13 @@ describe.only('Server', () => {
     })
 
     it('Should return again messages that are not confirmed', async () => {
-      queue.Push(
-        {
-          message: {
-            description: `Message 0`,
-          },
+      queue = queueManager.newQueue('wonderqt', 100)
+
+      queue.Push({
+        message: {
+          description: `Message 0`,
         },
-        100
-      )
+      })
 
       const app = createServer(queue)
       const requestResult1 = await request(app).get('/?amount=10').expect(200)
@@ -154,15 +153,14 @@ describe.only('Server', () => {
 
   describe('Test Confirm Messages', () => {
     it('Should return from queue unconfirmed messages', async () => {
+      queue = queueManager.newQueue('wonderqt', 100)
+
       for (let index = 0; index < 5; index++) {
-        queue.Push(
-          {
-            message: {
-              description: `Message ${index}`,
-            },
+        queue.Push({
+          message: {
+            description: `Message ${index}`,
           },
-          100
-        )
+        })
       }
 
       const app = createServer(queue)
@@ -182,15 +180,14 @@ describe.only('Server', () => {
     })
 
     it('Should not confirm unprocessing messages', async () => {
+      queue = queueManager.newQueue('wonderqt', 100)
+
       for (let index = 0; index < 5; index++) {
-        queue.Push(
-          {
-            message: {
-              description: `Message ${index}`,
-            },
+        queue.Push({
+          message: {
+            description: `Message ${index}`,
           },
-          100
-        )
+        })
       }
 
       const app = createServer(queue)
