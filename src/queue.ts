@@ -67,7 +67,7 @@ export class Queue {
    * @param timeout number The value in ms to the amount of time to the message expire if not confirmed
    */
   Push(body: any, timeout: number = 1000): string {
-    const message = new Message(body, this.MessageTimeout.bind(this), timeout)
+    const message = new Message(body, (message: Message) => this.MessageTimeout(message), timeout)
 
     message.state = MessageState.READY
     this.messagesReady.push(message)

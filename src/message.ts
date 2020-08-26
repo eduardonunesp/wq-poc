@@ -42,6 +42,10 @@ export class Message {
    */
   set state(newState: MessageState) {
     if (newState === MessageState.PROCESSING) {
+      if (this._timer) {
+        clearTimeout(this._timer)
+      }
+
       this._timer = setTimeout(() => {
         if (this._state === MessageState.PROCESSING) {
           this._state = MessageState.READY
