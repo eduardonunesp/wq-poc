@@ -1,6 +1,6 @@
 import { expect } from 'chai'
-import { Queue } from '../src'
-import { MessageState } from '../src'
+import { Queue } from '../src/queue'
+import { MessageState } from '../src/message'
 
 describe('Queue', () => {
   describe('Test PopFront', () => {
